@@ -39,40 +39,26 @@ export default async (req, res) => {
     locale,
     border_radius,
     border_color,
-    disable_animations,
     hide_progress,
     stats_format,
   } = req.query;
+
   res.setHeader("Content-Type", "image/svg+xml");
 
   const access = guardAccess({
     res,
     id: username,
     type: "username",
-    colors: {
-      title_color,
-      text_color,
-      bg_color,
-      border_color,
-      theme,
-    },
+    colors: { title_color, text_color, bg_color, border_color, theme },
   });
-  if (!access.isPassed) {
-    return access.result;
-  }
+  if (!access.isPassed) return access.result;
 
   if (locale && !isLocaleAvailable(locale)) {
     return res.send(
       renderError({
         message: "Something went wrong",
         secondaryMessage: "Locale not found",
-        renderOptions: {
-          title_color,
-          text_color,
-          bg_color,
-          border_color,
-          theme,
-        },
+        renderOptions: { title_color, text_color, bg_color, border_color, theme },
       }),
     );
   }
@@ -86,33 +72,20 @@ export default async (req, res) => {
       renderError({
         message: "Something went wrong",
         secondaryMessage: "Incorrect layout input",
-        renderOptions: {
-          title_color,
-          text_color,
-          bg_color,
-          border_color,
-          theme,
-        },
+        renderOptions: { title_color, text_color, bg_color, border_color, theme },
       }),
     );
   }
 
   if (
     stats_format !== undefined &&
-    (typeof stats_format !== "string" ||
-      !["bytes", "percentages"].includes(stats_format))
+    (typeof stats_format !== "string" || !["bytes", "percentages"].includes(stats_format))
   ) {
     return res.send(
       renderError({
         message: "Something went wrong",
         secondaryMessage: "Incorrect stats_format input",
-        renderOptions: {
-          title_color,
-          text_color,
-          bg_color,
-          border_color,
-          theme,
-        },
+        renderOptions: { title_color, text_color, bg_color, border_color, theme },
       }),
     );
   }
@@ -124,34 +97,34 @@ export default async (req, res) => {
       size_weight,
       count_weight,
     );
+
     const cacheSeconds = resolveCacheSeconds({
       requested: parseInt(cache_seconds, 10),
       def: CACHE_TTL.TOP_LANGS_CARD.DEFAULT,
       min: CACHE_TTL.TOP_LANGS_CARD.MIN,
       max: CACHE_TTL.TOP_LANGS_CARD.MAX,
     });
-
     setCacheHeaders(res, cacheSeconds);
 
     return res.send(
       renderTopLanguages(topLangs, {
-         custom_title,
-  hide_title: parseBoolean(hide_title),
-  hide_border: parseBoolean(hide_border),
-  card_width: parseInt(card_width, 10) || 300,
-  hide: parseArray(hide),
-  title_color,
-  text_color,
-  bg_color,
-  theme,
-  layout,
-  langs_count,
-  border_radius,
-  border_color,
-  locale: locale ? locale.toLowerCase() : null,
-  disable_animations: true, // THIS disables animations
-  hide_progress: parseBoolean(hide_progress),
-  stats_format,
+        custom_title,
+        hide_title: parseBoolean(hide_title),
+        hide_border: parseBoolean(hide_border),
+        card_width: parseInt(card_width, 10) || 300,
+        hide: parseArray(hide),
+        title_color,
+        text_color,
+        bg_color,
+        theme,
+        layout,
+        langs_count,
+        border_radius,
+        border_color,
+        locale: locale ? locale.toLowerCase() : null,
+        disable_animations: true,
+        hide_progress: parseBoolean(hide_progress),
+        stats_format,
       }),
     );
   } catch (err) {
@@ -175,13 +148,7 @@ export default async (req, res) => {
     return res.send(
       renderError({
         message: "An unknown error occurred",
-        renderOptions: {
-          title_color,
-          text_color,
-          bg_color,
-          border_color,
-          theme,
-        },
+        renderOptions: { title_color, text_color, bg_color, border_color, theme },
       }),
     );
   }
