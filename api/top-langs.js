@@ -47,11 +47,18 @@ export default async (req, res) => {
   try {
     let topLangs = await fetchTopLanguages(username, parseArray(exclude_repo), size_weight, count_weight);
 
-    // If full_list param is true, return all languages
-    if (!full_list) {
-      const limit = langs_count ? parseInt(langs_count, 10) : 10;
-      topLangs = topLangs.slice(0, limit);
-    }
+// Ensure it's always an array
+if (!Array.isArray(topLangs)) topLangs = [];
+
+// Convert query param to boolean
+const showFullList = parseBoolean(full_list);
+
+// Limit to top N if not full list
+if (!showFullList) {
+  const limit = langs_count ? parseInt(langs_count, 10) : 10;
+  topLangs = topLangs.slice(0, limit);
+}
+
 
     const cacheSeconds = resolveCacheSeconds({ requested: parseInt(cache_seconds, 10), def: 86400, min: 60, max: 86400 });
     setCacheHeaders(res, cacheSeconds);
